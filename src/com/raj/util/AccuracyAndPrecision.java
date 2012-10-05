@@ -32,13 +32,13 @@ public class AccuracyAndPrecision {
 		this.falseNegative = falseNegative;
 	}
 
-	public float getAccuracy() {
-		float sum = truePositive + trueNegative + falseNegative + falsePositive;
+	public double getAccuracy() {
+		double sum = truePositive + trueNegative + falseNegative + falsePositive;
 		return sum > 0 ? (truePositive + trueNegative) / sum : 0;
 	}
 
-	public float getPrecision() {
-		float sum = truePositive + falsePositive;
+	public double getPrecision() {
+		double sum = truePositive + falsePositive;
 		return sum > 0 ? truePositive / sum : 0;
 	}
 
@@ -109,8 +109,8 @@ public class AccuracyAndPrecision {
 	 * 
 	 * @return
 	 */
-	public float getSensitivity() {
-		return (float) truePositive / (truePositive + falseNegative);
+	public double getSensitivity() {
+		return ((double) truePositive) / (truePositive + falseNegative);
 	}
 
 	/**
@@ -118,8 +118,8 @@ public class AccuracyAndPrecision {
 	 * true negative result when used on a noninfected population (as determined
 	 * by a reference or "gold standard").
 	 */
-	public float getSpecificity() {
-		return (float) trueNegative / (trueNegative + falsePositive);
+	public double getSpecificity() {
+		return ((double) trueNegative) / (trueNegative + falsePositive);
 	}
 
 }
