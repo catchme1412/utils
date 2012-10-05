@@ -27,8 +27,9 @@ public class Tuple {
 		double[] other = v.getArray();
 		double result = 0.0;
 		int i = 0;
-		for (double val = e[i]; i < other.length; i++) {
+		for (double val : e) {
 			result += val * other[i];
+			i++;
 		}
 		return result;
 	}
@@ -71,7 +72,7 @@ public class Tuple {
 	public double square() {
 		if (!isSquareCalculated) {
 			for (double val : e) {
-				square += val;
+				square += val * val;
 			}
 			isSquareCalculated = true;
 		}
