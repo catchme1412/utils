@@ -1,4 +1,6 @@
-package com.raj.util;
+package com.raj.util.similarity;
+
+import com.raj.util.Tuple;
 
 public class CosineSimilarity {
 
