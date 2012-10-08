@@ -69,7 +69,6 @@ public class StringRank {
 				Object pair2 = pairs2.get(j);
 				if (pair1.equals(pair2)) {
 					intersection++;
-					System.out.print(pair1);
 					pairs2.remove(j);
 					break;
 				}

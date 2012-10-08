@@ -15,7 +15,7 @@ public class ImprovedExceptionCountAlgorithm {
 		String sCurrentLine;
 		String prevString = "";
 		String prevClass = "";
-		BufferedReader br = new BufferedReader(new FileReader("/home/rkv/dev/projects/cluster/sorted.log"));
+		BufferedReader br = new BufferedReader(new FileReader("/home/rkv/dev/orbitz/dashboard/dump/e.txt"));
 		int count = 1;
 		while ((sCurrentLine = br.readLine()) != null) {
 			String className = sCurrentLine.split("\\|")[8];

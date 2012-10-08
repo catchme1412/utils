@@ -46,6 +46,5 @@ public class CosineSimilarity {
 		System.out.println(similarity(v1, v2));
 		System.out.println(similarity(v2, v1));
 		System.out.println(distance(v1.getArray(), v2.getArray()));
-		;
 	}
 }
