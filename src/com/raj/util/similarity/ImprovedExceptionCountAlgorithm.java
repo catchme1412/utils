@@ -19,12 +19,13 @@ public class ImprovedExceptionCountAlgorithm {
 		int count = 1;
 		while ((sCurrentLine = br.readLine()) != null) {
 			String className = sCurrentLine.split("\\|")[8];
+			System.out.println(className);
 			double classRank = className.equalsIgnoreCase(prevClass) == true ? 1 : 0;
 			prevClass = className;
 
 			double stringRank = StringRank.compareStrings(sCurrentLine, prevString);
 			double totalWeight = stringRank * .4 + classRank * .6;
-			System.out.println(className + ": : " + totalWeight);
+			System.out.println(">>>>>>>>>>>>>>" + className + ": : " + totalWeight);
 			
 			if (totalWeight > 0.8) {
 				count++;
@@ -34,7 +35,10 @@ public class ImprovedExceptionCountAlgorithm {
 			}
 			prevString = sCurrentLine;
 		}
-		Iterator it = exceptionCount.keySet().iterator();
+		if (exceptionCount.size() == 1) {
+			exceptionCount.put(exceptionCount.keySet().iterator().next(), count++);
+		}
+		Iterator<String> it = exceptionCount.keySet().iterator();
 		while (it.hasNext()) {
 			Object key = it.next();
 			System.out.println(key + ":::::::::" + exceptionCount.get(key).toString());
