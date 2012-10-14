@@ -2,9 +2,8 @@ package com.raj.util;
 
 public class Matrix {
 
-	private double[][] c;
+	private double[][] elements;
 
-	public Matrix(boolean isRow, Tuple...tuples) {
-		
+	public Matrix() {
 	}
 }
