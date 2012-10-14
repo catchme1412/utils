@@ -2,7 +2,7 @@ package com.raj.util;
 
 public class Tuple {
 
-	private double[] e;
+	private double[] elements;
 
 	private boolean isAvgCalculated;
 
@@ -17,17 +17,17 @@ public class Tuple {
 	private double square;
 
 	public Tuple(double... val) {
-		this.e = val;
+		this.elements = val;
 	}
 
 	/**
 	 * Return the dot product of two vectors (tuples)
 	 */
 	public double dot(Tuple v) {
-		double[] other = v.getArray();
+		double[] other = v.getElements();
 		double result = 0.0;
 		int i = 0;
-		for (double val : e) {
+		for (double val : elements) {
 			result += val * other[i];
 			i++;
 		}
@@ -36,8 +36,8 @@ public class Tuple {
 
 	public Tuple multiply(double scalarValue) {
 		int i = 0;
-		for (double v : e) {
-			e[i] = v * scalarValue;
+		for (double v : elements) {
+			elements[i] = v * scalarValue;
 			i++;
 		}
 		return this;
@@ -53,7 +53,7 @@ public class Tuple {
 
 	public double sum() {
 		if (!isSumCalculated) {
-			for (double val : e) {
+			for (double val : elements) {
 				sum += val;
 			}
 			isSumCalculated = true;
@@ -63,7 +63,7 @@ public class Tuple {
 
 	public double getAverage() {
 		if (!isAvgCalculated) {
-			average = sum() / e.length;
+			average = sum() / elements.length;
 			isAvgCalculated = true;
 		}
 		return average;
@@ -71,7 +71,7 @@ public class Tuple {
 
 	public double square() {
 		if (!isSquareCalculated) {
-			for (double val : e) {
+			for (double val : elements) {
 				square += val * val;
 			}
 			isSquareCalculated = true;
@@ -86,20 +86,24 @@ public class Tuple {
 		return Math.sqrt(square());
 	}
 
-	public double[] getArray() {
-		return e;
+	public double[] getElements() {
+		return elements;
 	}
 
 	public void setArray(double[] e) {
-		this.e = e;
+		this.elements = e;
 	}
 
 	public double elementSum() {
 		double sum = 0;
-		for (double v : e) {
+		for (double v : elements) {
 			sum += v;
 		}
 		return sum;
+	}
+	
+	public int length() {
+		return elements.length;
 	}
 
 	public double correlationCoefficient(Tuple y) {
@@ -108,7 +112,7 @@ public class Tuple {
 		double sumXY = this.dot(y);
 		double xSquare = this.square();
 		double ySquare = y.square();
-		int n = e.length;
+		int n = elements.length;
 		return (n * sumXY - sumX * sumY)
 				/ (Math.sqrt(n * xSquare - sumX * sumX) * Math.sqrt(n * ySquare - sumY * sumY));
 	}
