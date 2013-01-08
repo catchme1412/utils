@@ -20,8 +20,8 @@ public class CosineSimilarity {
 		}
 		return dotProduct / denominator;
 	}
-	
-	public static double similartity (double[] p1, double[] p2) {
+
+	public static double similartity(double[] p1, double[] p2) {
 		return 1.0 - distance(p1, p2);
 	}
 
@@ -41,10 +41,13 @@ public class CosineSimilarity {
 	}
 
 	public static void main(String[] args) {
-		//
-		Tuple v1 = new Tuple(1, 2, 3);
-		Tuple v2 = new Tuple(1, 3, 3);
-		System.out.println(similarity(v1, v2));
+		//full movie, movie, song, duration, rating
+		Tuple movie = new Tuple(1, 1, 0, 7, 5);
+		Tuple song = new Tuple(0, 1, 1, 7, 5);
+		Tuple v1 = new Tuple(0, 1, 0, 7, 4);
+		Tuple v2 = new Tuple(0, 1, 1, 6, 3);
+		System.out.println(similarity(v1, movie));
+		System.out.println(similarity(v1, song));
 		System.out.println(similarity(v2, v1));
 		System.out.println(distance(v1.getElements(), v2.getElements()));
 	}

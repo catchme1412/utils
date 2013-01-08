@@ -38,5 +38,5 @@ public class TupleUtils {
 		return sum(x)/x.length;
 	}
 	
-	
+
 }
