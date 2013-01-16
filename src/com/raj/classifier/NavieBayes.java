@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-//http://computersciencesource.wordpress.com/2010/01/28/year-2-machine-learning-naive-bayes-classifier/
+//@see http://computersciencesource.wordpress.com/2010/01/28/year-2-machine-learning-naive-bayes-classifier/
 
 public class NavieBayes {
 
@@ -70,7 +70,11 @@ public class NavieBayes {
 		int i = 0;
 		for (Attribute attribute : attributes) {
 			attributeValues.add(attribute);
-			attribute.setFeature(features[i]);
+			if (attribute.getFeature() == null) {
+			    attribute.setFeature(features[i]);
+			} else if (!attribute.getFeature().equals(features[i])){
+			    throw new RuntimeException("Changing the feature is not permitted");
+			}
 			Map<Attribute, Long> attributeMap = attributePerCategoryCount.get(category);
 			if (attributeMap == null) {
 				HashMap<Attribute, Long> value = new HashMap<Attribute, Long>();
@@ -83,8 +87,12 @@ public class NavieBayes {
 			i++;
 //			System.out.print("\t");
 		}
-		System.out.println(attributePerCategoryCount);
 		counter(cateogryCount, category);
+		System.out.println("\n\n");
+		for (Category c: attributePerCategoryCount.keySet()) {
+		    
+		    System.out.println(c + ":" + attributePerCategoryCount.get(c));
+		}
 //		System.out.println("Category");
 //		for (Attribute v : attributeValues) {
 //			System.out.print(v);
@@ -134,15 +142,16 @@ public class NavieBayes {
 		Attribute Weak = new Attribute("Weak");
 		Attribute Strong = new Attribute("Strong");
 
-		navieBayes.train(No, Sunny, Hot, High, Weak);
-		navieBayes.train(No, Sunny, Hot, High, Strong);
-		navieBayes.train(Yes, Overcast, Hot, High, Weak);
-		navieBayes.train(Yes, Rain, Mild, High, Weak);
 		navieBayes.train(Yes, Rain, Cool, Normal, Weak);
 		navieBayes.train(No, Rain, Cool, Normal, Strong);
 		navieBayes.train(Yes, Overcast, Cool, Normal, Strong);
 		navieBayes.train(No, Sunny, Mild, High, Weak);
 		navieBayes.train(Yes, Sunny, Cool, Normal, Weak);
+		
+		navieBayes.train(No, Sunny, Hot, High, Weak);
+		navieBayes.train(No, Sunny, Hot, High, Strong);
+		navieBayes.train(Yes, Overcast, Hot, High, Weak);
+		navieBayes.train(Yes, Rain, Mild, High, Weak);
 		navieBayes.train(Yes, Rain, Mild, Normal, Weak);
 		navieBayes.train(Yes, Sunny, Mild, Normal, Strong);
 		navieBayes.train(Yes, Overcast, Mild, High, Strong);
@@ -194,7 +203,6 @@ public class NavieBayes {
 		// featureValueMap.put(humidity, highHumidity);
 		// navieBayes.train(no, featureValueMap);
 		// System.out.println(navieBayes.cateogryCount);
-		System.out.println(navieBayes.attributePerCategoryCount);
 		System.out.println(navieBayes.getPriorProb(no));
 		System.out.println(navieBayes.getPriorProb(yes));
 		System.out.println(navieBayes.getConditionalProb(highHumidity, no));
@@ -221,7 +229,11 @@ public class NavieBayes {
 		if (v == null) {
 			prob = 0L;
 		}
-		Long val = v.get(att);
+		Long val = 0L;
+		if (v != null && v.containsKey(att)) {
+		    val = v.get(att);
+		} 
+		
 		val = val == null ? 0L : val;
 		prob = val.doubleValue();
 		System.out.println("\t" + prob + "/" + cateogryCount.get(category) + "=" + prob / cateogryCount.get(category));

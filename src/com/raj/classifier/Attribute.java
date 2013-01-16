@@ -7,13 +7,18 @@ public class Attribute implements Serializable {
 	
 	private Feature feature;
 	
+	public Attribute(Attribute attribute) {
+	    this.name = attribute.name;
+	    this.feature = attribute.feature;
+	}
+	
 	public Attribute(Serializable name) {
 		this.name = name;
 	}
 	
 	@Override
 	public String toString() {
-		return name.toString();
+		return feature.toString() + "_" + name.toString();
 	}
 	
 	@Override
