@@ -80,6 +80,6 @@ public class StringRank {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(compareStrings("Nimi Narayanan", "Nimmy Narayan"));
+		System.out.println(compareStrings("The Junit testing tutorial", "Junit testing"));
 	}
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Category implements Serializable  {
-	// feature is one or more attributes
+	//A feature is one or more attributes
 	private Serializable name;
 	private Map<Feature, List<Attribute>> map;
 	
