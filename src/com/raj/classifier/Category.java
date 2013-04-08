@@ -1,13 +1,15 @@
 package com.raj.classifier;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 public class Category implements Serializable  {
-	//A feature is one or more attributes
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
+    //A feature is one or more attributes
 	private Serializable name;
-	private Map<Feature, List<Attribute>> map;
 	
 	public Category(Serializable name) {
 		this.name = name;

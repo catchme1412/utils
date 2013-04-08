@@ -59,10 +59,22 @@ public class TextAlgorithms {
         return r + errorTolerance >= 1 ? true : false;
     }
     
+    public double contains(String text, String pattern) {
+        String commonString = longestSubstring(text, pattern);
+        int textIndex = text.indexOf(commonString);
+        int patternIndex = pattern.indexOf(commonString);
+        int prefixSize = patternIndex;
+        String commonPatternString = text.substring(textIndex - prefixSize, textIndex + pattern.length() - prefixSize);
+        System.out.println("'" + commonPatternString + "' compared with '" + pattern + "'");
+        return StringRank.compareStrings(commonPatternString, pattern);
+    }
+    
     public static void main(String[] args) {
-        boolean d = new TextAlgorithms().fuzzyContains("This is a not good movies in the ", "god movie", 0.2);
-        
+        System.out.println(StringRank.compareStrings("good movie", "A movie"));
+        boolean d = new TextAlgorithms().fuzzyContains("This is a good movies in the ", "not god movie", 0.2);
         System.out.println(d);
-        System.out.println(StringRank.compareStrings("good movie", "gud movie"));
+        double d2 = new TextAlgorithms().contains("This is a good movie", "not god movie");
+        System.out.println(d2);
+
     }
 }
