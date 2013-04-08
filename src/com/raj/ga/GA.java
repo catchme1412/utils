@@ -38,19 +38,15 @@ public class GA {
                 n2.mutate();
 
                 // Rescore the nodes
-                n1.scoreChromo(target);
-                n2.scoreChromo(target);
+//                n1.scoreChromo(target);
+//                n2.scoreChromo(target);
 
                 // Check to see if either is the solution
-                if (n1.total == target && n1.isValid()) {
-                    System.out.println("Generations: " + gen + "  Solution: " + n1.decodeChromo());
-                    return;
+                if (n1.getFitness() > 0.9) {
+                    System.out.println(n1);
+                }else if (n2.getFitness() > .9) {
+                    System.out.println(n2);
                 }
-                if (n2.total == target && n2.isValid()) {
-                    System.out.println("Generations: " + gen + "  Solution: " + n2.decodeChromo());
-                    return;
-                }
-
                 // Add to the new pool
                 newPool.add(n1);
                 newPool.add(n2);

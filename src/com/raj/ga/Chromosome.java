@@ -1,9 +1,13 @@
-package com.raj.math;
+package com.raj.ga;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 public class Chromosome {
 
@@ -37,6 +41,7 @@ public class Chromosome {
         System.out.println(s.getExpression());
         System.out.println(s.getDecodedExpression());
         System.out.println(s.getValidExpression());
+        System.out.println(s.getFitness());
     }
 
     public List getAllowedOperands() {
@@ -91,15 +96,15 @@ public class Chromosome {
         if ("*".equals(decoded.get(0)) || "/".equals(decoded.get(0))) {
             decoded.remove(0);
         }
-        int size = decoded.size()- 1;
-        if ("+".equals(decoded.get(size)) || "-".equals(decoded.get(size))
-                || "*".equals(decoded.get(size)) || "/".equals(decoded.get(size))) {
+        int size = decoded.size() - 1;
+        if ("+".equals(decoded.get(size)) || "-".equals(decoded.get(size)) || "*".equals(decoded.get(size))
+                || "/".equals(decoded.get(size))) {
             decoded.remove(size);
         }
         return decoded;
     }
 
-    public void mutate(Chromosome n) {
+    public void crossOver(Chromosome n) {
         int index = rand.nextInt(expression.size());
         List temp = expression.subList(index, expression.size());
         List temp2 = n.getExpression().subList(index, expression.size());
@@ -109,7 +114,7 @@ public class Chromosome {
         n.getExpression().addAll(temp);
     }
 
-    public void crossOver() {
+    public void mutate() {
         int index = rand.nextInt(expression.size());
         Object temp = expression.get(index);
         Object temp2 = expression.get(0);
@@ -118,6 +123,20 @@ public class Chromosome {
     }
 
     public double getFitness() {
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        ScriptEngine engine = mgr.getEngineByName("JavaScript");
+        try {
+            String foo = getValidExpression().toString().replaceAll(",", "")
+                    .replaceAll("\\[", "").replaceAll("]", "");
+            System.out.println("FFFFF:" + foo);
+            return Double.parseDouble(engine.eval(foo).toString());
+        } catch (NumberFormatException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ScriptException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return 0;
     }
 
