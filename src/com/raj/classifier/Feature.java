@@ -7,9 +7,17 @@ public class Feature extends HashMap<Attribute, Long> {
 	
 	private Serializable name;
 	
+	private Qualifier qualifer;
+	
 	public Feature(Serializable name) {
 		this.name = name;
 	}
+	
+	public Feature(Serializable name, Qualifier qualifier) {
+		this.name = name;
+		this.qualifer = qualifer;
+	}
+	
 	/**
 	 * 
 	 */
@@ -32,5 +40,13 @@ public class Feature extends HashMap<Attribute, Long> {
 	@Override
 	public int hashCode() {
 		return name.hashCode();
+	}
+
+	public Qualifier getQualifer() {
+		return qualifer;
+	}
+
+	public void setQualifer(Qualifier qualifer) {
+		this.qualifer = qualifer;
 	}
 }

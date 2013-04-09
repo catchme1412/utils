@@ -186,6 +186,17 @@ public class NavieBayes {
         // System.out.println(navieBayes.classify(Sunny, Cool, High, Strong));
         // X = (Outlook=Sunny, Temperature=Cool, Humidity=High, Wind=Strong)
         System.out.println(navieBayes.classify(Sunny, Cool, High, Strong));
+        
+        /////////////////////////
+        Category low = new Category("low");
+        Category high = new Category("high");
+        Category medium = new Category("medium");
+        
+//        Feature noOfOperators = new Feature("noOfOperators", Qualifier.greateThan(2));
+        Feature noOfUniqueOperators = new Feature("noOfUniqueOperators");
+        Feature literalCount = new Feature("literalCount");
+//        NavieBayes navieBayes2 = new NavieBayes(noOfOperators, noOfUniqueOperators, literalCount);
+        Attribute operatorCount = new Attribute(2);
     }
 
     public static void main2(String[] args) {

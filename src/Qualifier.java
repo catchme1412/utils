@@ -78,7 +78,7 @@ public class Qualifier implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        
+        return false;
     }
     
     @Override

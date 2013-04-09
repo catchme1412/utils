@@ -160,7 +160,7 @@ public class Chromosome {
 		for (Object o : validExpr) {
 			if (allowedOperands.contains(o)) {
 				operandCount++;
-				totalOperandWeight +=weightageForOperand.get(o);
+				totalOperandWeight += weightageForOperand.get(o);
 				uniqueOperands.add(o);
 			} else {
 				literalCount++;
@@ -170,10 +170,10 @@ public class Chromosome {
 		if (literalCount == 0 || operandCount == 0) {
 			return 0;
 		}
-		double d = (uniqueOperands.size() / literalCount) * (uniqueOperands.size() / operandCount);
-		int maxOperatorAllowed = geneSize - (geneSize + 1) / 2;
-		
-		return d*.8 + 0.2 * totalOperandWeight/(4*maxOperatorAllowed);
+		double d = (1- uniqueOperands.size() /operandCount )*.5 + (uniqueOperands.size() /literalCount )*.5;
+		int maxOperatorAllowed = validExpr.size() - (validExpr.size() + 1) / 2;
+
+		return d ;//;
 	}
 
 	public double getFitness(double expectedDifficultyLevel) {

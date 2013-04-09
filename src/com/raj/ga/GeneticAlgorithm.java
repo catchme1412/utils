@@ -48,7 +48,7 @@ public class GeneticAlgorithm {
 				// Rescore the nodes
 				// n1.scoreChromo(target);
 				// n2.scoreChromo(target);
-				System.out.println(n1.getValidExpression() + "::" + n1.getFitness(_0_5));
+				System.out.println(n1.getValidExpression() + "::" + n1.difficultyScore() + ":" + n1.getFitness(_0_5));
 				// Check to see if either is the solution
 				if (n1.getFitness(_0_5) > 0.9) {
 					System.out.println("DONE:" + n1.getValidExpression() + "::" + n1.getFitness(_0_5));
