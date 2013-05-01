@@ -4,20 +4,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public class Feature extends HashMap<Attribute, Long> {
-	
+
 	private Serializable name;
-	
-	private Qualifier qualifer;
-	
+
+
 	public Feature(Serializable name) {
 		this.name = name;
 	}
-	
-	public Feature(Serializable name, Qualifier qualifier) {
-		this.name = name;
-		this.qualifer = qualifer;
-	}
-	
+
+//	public Feature(Serializable name, Qualifier qualifier) {
+//		this.name = name;
+//		this.setQualifier(qualifier);
+//	}
+
 	/**
 	 * 
 	 */
@@ -26,27 +25,32 @@ public class Feature extends HashMap<Attribute, Long> {
 	public Long getProb(Attribute a) {
 		return super.get(a);
 	}
-	
+
 	@Override
 	public String toString() {
 		return name.toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
-		return name.equals(o.toString());
+		boolean isNameEqual = name.equals(o.toString());
+//		if (qualifier != null) {
+//			return qualifier.qualify((Serializable) o) && isNameEqual;
+//		}
+		return isNameEqual;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return name.hashCode();// + (qualifier != null ? qualifier.hashCode() : 0);
 	}
 
-	public Qualifier getQualifer() {
-		return qualifer;
-	}
+//	public Qualifier getQualifier() {
+//		return qualifier;
+//	}
+//
+//	public void setQualifier(Qualifier qualifier) {
+//		this.qualifier = qualifier;
+//	}
 
-	public void setQualifer(Qualifier qualifer) {
-		this.qualifer = qualifer;
-	}
 }

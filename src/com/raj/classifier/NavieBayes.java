@@ -3,280 +3,361 @@ package com.raj.classifier;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 //@see http://computersciencesource.wordpress.com/2010/01/28/year-2-machine-learning-naive-bayes-classifier/
 
 public class NavieBayes {
 
-    // Category 1* Features 1* Atribute 1-1 Prob
+	// Category 1* Features 1* Atribute 1-1 Prob
 
-    private Feature[] features;
+	private Feature[] features;
 
-    private Map<Category, Long> cateogryCount;
-    double totalCategoryCount;
-    private Map<Category, Map<Attribute, Long>> attributePerCategoryCount;
+	private Map<Category, Long> cateogryCount;
+	double totalCategoryCount;
+	private Map<Category, Map<Attribute, Long>> attributePerCategoryCount;
 
-    private long featureCount;
+	private Map<Feature, Set<Attribute>> featureAttributeMap;
 
-    public NavieBayes(Feature... features) {
-        this.features = features;
-        cateogryCount = new HashMap<Category, Long>();
-        totalCategoryCount = 0;
-        attributePerCategoryCount = new HashMap<Category, Map<Attribute, Long>>();
-    }
+	private long featureCount;
 
-    public NavieBayes(long featureCount) {
-        cateogryCount = new HashMap<Category, Long>();
-        totalCategoryCount = 0;
-        attributePerCategoryCount = new HashMap<Category, Map<Attribute, Long>>();
-    }
+	public NavieBayes(Feature... features) {
+		this.features = features;
+		cateogryCount = new HashMap<Category, Long>();
+		featureAttributeMap = new HashMap();
+		totalCategoryCount = 0;
+		attributePerCategoryCount = new HashMap<Category, Map<Attribute, Long>>();
+	}
 
-    public void train(Category category, Map<Feature, Attribute> featureValueMap) {
-        if (featureValueMap.size() != getFeatures().length) {
-            throw new RuntimeException("Feature count is not " + featureCount);
-        }
-        counter(cateogryCount, category);
-        totalCategoryCount++;
-        List<Attribute> attributeValues = new ArrayList<Attribute>();
-        for (Feature f : getFeatures()) {
-            attributeValues.add(featureValueMap.get(f));
-            if (attributePerCategoryCount.get(category) == null) {
-                attributePerCategoryCount.put(category, new HashMap<Attribute, Long>());
-            } else {
-                counter(attributePerCategoryCount.get(category), featureValueMap.get(f));
-            }
-            System.out.print(f);
-            System.out.print("\t");
-        }
+	public NavieBayes(long featureCount) {
+		cateogryCount = new HashMap<Category, Long>();
+		totalCategoryCount = 0;
+		attributePerCategoryCount = new HashMap<Category, Map<Attribute, Long>>();
+	}
 
-        System.out.println("Category");
-        for (Attribute v : attributeValues) {
-            System.out.print(v);
-            System.out.print("\t\t");
-        }
-        System.out.println(category);
+	public void train(Category category, Map<Feature, Attribute> featureValueMap) {
+		if (featureValueMap.size() != getFeatures().length) {
+			throw new RuntimeException("Feature count is not " + featureCount);
+		}
+		counter(cateogryCount, category);
+		totalCategoryCount++;
+		List<Attribute> attributeValues = new ArrayList<Attribute>();
+		for (Feature f : getFeatures()) {
+			attributeValues.add(featureValueMap.get(f));
+			if (attributePerCategoryCount.get(category) == null) {
+				attributePerCategoryCount.put(category, new HashMap<Attribute, Long>());
+			} else {
+				counter(attributePerCategoryCount.get(category), featureValueMap.get(f));
+			}
+			System.out.print(f);
+			System.out.print("\t");
+		}
 
-    }
+		System.out.println("Category");
+		for (Attribute v : attributeValues) {
+			System.out.print(v);
+			System.out.print("\t\t");
+		}
+		System.out.println(category);
 
-    public void train(Category category, Attribute... attributes) {
-        if (attributes.length != features.length) {
-            throw new RuntimeException("Feature count is not " + featureCount);
-        }
-        totalCategoryCount++;
-        List<Attribute> attributeValues = new ArrayList<Attribute>();
-        int i = 0;
-        // System.out.print("\nTRAINING=>"+ category + ":");
-        for (Attribute attribute : attributes) {
-            attributeValues.add(attribute);
-            if (attribute.getFeature() == null) {
-                attribute.setFeature(features[i]);
-            } else if (!attribute.getFeature().equals(features[i])) {
-                throw new RuntimeException("Changing the feature is not permitted");
-            }
-            Map<Attribute, Long> attributeMap = attributePerCategoryCount.get(category);
-            if (attributeMap == null) {
-                HashMap<Attribute, Long> value = new HashMap<Attribute, Long>();
-                counter(value, attribute);
-                attributePerCategoryCount.put(category, value);
-            } else {
-                counter(attributeMap, attribute);
-            }
-            // System.out.print(attribute + ", ");
-            // System.out.print(features[i]);
-            i++;
-            // System.out.print("\t");
-        }
-        counter(cateogryCount, category);
-        // System.out.println("\nLEARNED:");
-        // for (Category c: attributePerCategoryCount.keySet()) {
-        // System.out.println(c + ":" + attributePerCategoryCount.get(c));
-        // }
-        // System.out.println("Category");
-        // for (Attribute v : attributeValues) {
-        // System.out.print(v);
-        // System.out.print("\t\t");
-        // }
-        // System.out.println(category);
-    }
+	}
 
-    public Category classify(Attribute... attributes) {
-        TreeMap<Double, Category> values = new TreeMap<Double, Category>();
-        for (Category c : cateogryCount.keySet()) {
-            double categoryProb = 1;
-            for (Attribute attribute : attributes) {
-                double x = getConditionalProb(attribute, c);
-                categoryProb *= x;
-            }
-            System.out.println("conditional:" + categoryProb);
-            categoryProb *= getPriorProb(c);
-            System.out.println("proirProb:" + categoryProb);
-            values.put(categoryProb, c);
-            System.out.println("CLASSIFICATION=>Cateogry:" + c + " : " + categoryProb);
-        }
-        System.out.println(values);
-        return values.lastEntry().getValue();
-    }
+	public void train(Category category, Attribute... attributes) {
+		if (attributes.length != features.length) {
+			throw new RuntimeException("Feature count is not " + featureCount);
+		}
+		totalCategoryCount++;
+		List<Attribute> attributeValues = new ArrayList<Attribute>();
+		int i = 0;
+		// System.out.print("\nTRAINING=>"+ category + ":");
+		for (Attribute attribute : attributes) {
+			attributeValues.add(attribute);
+			if (attribute.getFeature() == null) {
+				attribute.setFeature(features[i]);
+			} else if (!attribute.getFeature().equals(features[i])) {
+				throw new RuntimeException("Changing the feature is not permitted");
+			}
 
-    public static void main(String[] args) {
-        Category Yes = new Category("Yes");
-        Category No = new Category("No");
+			Set<Attribute> attributeList = featureAttributeMap.get(features[i]);
+			if (attributeList == null) {
+				featureAttributeMap.put(features[i], new HashSet());
+			} else {
+				attributeList.add(attribute);
+				featureAttributeMap.put(features[i],attributeList);
+			}
 
-        Feature outlook = new Feature("Outlook");
-        Feature temperature = new Feature("Temperature");
-        Feature humidity = new Feature("Humidity");
-        Feature wind = new Feature("Wind");
+			Map<Attribute, Long> attributeMap = attributePerCategoryCount.get(category);
+			if (attributeMap == null) {
+				HashMap<Attribute, Long> value = new HashMap<Attribute, Long>();
+				counter(value, attribute);
+				attributePerCategoryCount.put(category, value);
+			} else {
+				counter(attributeMap, attribute);
+			}
+			// System.out.print(attribute + ", ");
+			// System.out.print(features[i]);
+			i++;
+			// System.out.print("\t");
+		}
+		counter(cateogryCount, category);
+		// System.out.println("\nLEARNED:");
+		// for (Category c: attributePerCategoryCount.keySet()) {
+		// System.out.println(c + ":" + attributePerCategoryCount.get(c));
+		// }
+		// System.out.println("Category");
+		// for (Attribute v : attributeValues) {
+		// System.out.print(v);
+		// System.out.print("\t\t");
+		// }
+		// System.out.println(category);
+	}
 
-        NavieBayes navieBayes = new NavieBayes(outlook, temperature, humidity, wind);
+	public Category classify(Attribute... attributes) {
+		TreeMap<Double, Category> values = new TreeMap<Double, Category>();
+		for (Category c : cateogryCount.keySet()) {
+			double categoryProb = 1;
+			for (Attribute attribute : attributes) {
+				double x = getConditionalProb(attribute, c);
+				categoryProb *= x;
+			}
+			System.out.println("conditional:" + categoryProb);
+			categoryProb *= getPriorProb(c);
+			System.out.println("proirProb:" + categoryProb);
+			values.put(categoryProb, c);
+			System.out.println("CLASSIFICATION=>Cateogry:" + c + " : " + categoryProb);
+		}
+		System.out.println(values);
+		return values.lastEntry().getValue();
+	}
 
-        Attribute Sunny = new Attribute("Sunny");
-        Attribute Overcast = new Attribute("Overcast");
-        Attribute Rain = new Attribute("Rain");
+	public static void main(String[] args) {
+		Category Yes = new Category("Yes");
+		Category No = new Category("No");
+		Feature mediaTitle = new Feature("title");
+		Feature duration = new Feature("duration");
+		NavieBayes navieBayes = new NavieBayes(mediaTitle, duration);
+		Qualifier contains = Qualifier.contains("movie");
+		Qualifier containsNot = Qualifier.contains("movie").setNegation(true);
+		Attribute titleContainsMovie = new Attribute("containsMovie", contains);
+		Attribute titleDontContainsMovie = new Attribute("dontContainsMovie", containsNot);
+		Attribute durationAboveOneHour = new Attribute("aboveOneHour", Qualifier.greateThan(3600));
+		Attribute durationLessThanOneHour = new Attribute("lessThanOneHour", Qualifier.lessThan(3600));
+		navieBayes.train(Yes, titleContainsMovie, durationAboveOneHour);
+		navieBayes.train(No, titleContainsMovie, durationLessThanOneHour);
+		navieBayes.train(No, titleDontContainsMovie, durationLessThanOneHour);
+		navieBayes.train(Yes, titleDontContainsMovie, durationLessThanOneHour);
+		Category c = navieBayes.classify("da thadiya movie", 3700);
+		System.out.println(c);
+	}
 
-        Attribute Hot = new Attribute("Hot");
-        Attribute Mild = new Attribute("Mild");
-        Attribute Cool = new Attribute("Cool");
+	private Category classify(Serializable... attributes) {
+		Attribute[] arg = new Attribute[attributes.length];
+		int i = 0;
+		for (Serializable a : attributes) {
+			System.out.println("AAAAAA" + a);
+			Set<Attribute> attr = featureAttributeMap.get(features[i]);
+			System.out.println(attr);
+			for (Attribute at : attr) {
+				System.out.println(at.getQualifier());
+				if (at.getQualifier().qualify(a)) {
+					arg[i] = at;
+					System.out.println(at + ":::" + a + "::::" + arg[i]);
+					i++;
+				}
+			}
+		}
+		//loop through feature
+		//get all the attributes under the feature
+		//match the attribute with args
+		//add the matched to the arg
+		
+		//
+//			List<Attribute> attr = featureAttributeMap.get(f);
+//			System.out.println(f + "" + attr);
+//			int j = 0;
+//			for (Attribute a : attr) {
+//				for (Serializable sa : attributes) {
+//					if (a.getQualifier().qualify(sa)) {
+//						arg[i] = a;
+//						i++;
+//					}
+//				}
+//				// if (a.getQualifier().qualify((Serializable) attributes[j++]))
+//				// {
+//				// arg[i] = a;
+//				// i++;
+//				// }
+//				// System.out.println(a);
+//			}
+//		}
+		return classify(arg);
+//		return null;
+	}
 
-        Attribute High = new Attribute("High");
-        Attribute Normal = new Attribute("Normal");
+	public static void main3(String[] args) {
+		Category Yes = new Category("Yes");
+		Category No = new Category("No");
 
-        Attribute Weak = new Attribute("Weak");
-        Attribute Strong = new Attribute("Strong");
-        // Day Outlook Temperature Humidity Wind Play Tennis?
+		Feature outlook = new Feature("Outlook");
+		Feature temperature = new Feature("Temperature");
+		Feature humidity = new Feature("Humidity");
+		Feature wind = new Feature("Wind");
 
-        // 3 Overcast Hot High Weak Yes
-        navieBayes.train(Yes, Overcast, Hot, High, Weak);// 3
-        // 4 Rain Mild High Weak Yes
-        navieBayes.train(Yes, Rain, Mild, High, Weak);// 4
-        // 9 Sunny Cool Normal Weak Yes
-        navieBayes.train(Yes, Sunny, Cool, Normal, Weak);// 9
-        // 10 Rain Mild Normal Weak Yes
-        navieBayes.train(Yes, Rain, Mild, Normal, Weak);// 10
-        // 13 Overcast Hot Normal Weak Yes
-        navieBayes.train(Yes, Overcast, Hot, Normal, Weak);// 13
+		NavieBayes navieBayes = new NavieBayes(outlook, temperature, humidity, wind);
 
-        // 1 Sunny Hot High Weak No
-        navieBayes.train(No, Sunny, Hot, High, Weak);// 1
-        // 2 Sunny Hot High Strong No
-        navieBayes.train(No, Sunny, Hot, High, Strong);// 2
-        // 5 Rain Cool Normal Weak Yes
-        navieBayes.train(Yes, Rain, Cool, Normal, Weak);// 5
-        // 6 Rain Cool Normal Strong No
-        navieBayes.train(No, Rain, Cool, Normal, Strong);// 6Weak
-        // 7 Overcast Cool Normal Strong Yes
-        navieBayes.train(Yes, Overcast, Cool, Normal, Strong);// 7
-        // 8 Sunny Mild High Weak No
-        navieBayes.train(No, Sunny, Mild, High, Weak);// 8
-        // 11 Sunny Mild Normal Strong Yes
-        navieBayes.train(Yes, Sunny, Mild, Normal, Strong);// 11
-        // 12 Overcast Mild High Strong Yes
-        navieBayes.train(Yes, Overcast, Mild, High, Strong);// 12
-        // 14 Rain Mild High Strong No
-        navieBayes.train(No, Rain, Mild, High, Strong);// 14
+		Attribute Sunny = new Attribute("Sunny");
+		Attribute Overcast = new Attribute("Overcast");
+		Attribute Rain = new Attribute("Rain");
 
-        // navieBayes.getPriorProb(No);
-        // navieBayes.getPriorProb(Yes);
+		Attribute Hot = new Attribute("Hot");
+		Attribute Mild = new Attribute("Mild");
+		Attribute Cool = new Attribute("Cool");
 
-        // navieBayes.getConditionalProb(Sunny, Yes);
-        // navieBayes.getConditionalProb(Overcast, Yes);
-        // navieBayes.getConditionalProb(High, Yes);
+		Attribute High = new Attribute("High");
+		Attribute Normal = new Attribute("Normal");
 
-        // System.out.println(navieBayes.classify(Sunny, Cool, High, Strong));
-        // X = (Outlook=Sunny, Temperature=Cool, Humidity=High, Wind=Strong)
-        System.out.println(navieBayes.classify(Sunny, Cool, High, Strong));
-        
-        /////////////////////////
-        Category low = new Category("low");
-        Category high = new Category("high");
-        Category medium = new Category("medium");
-        
-//        Feature noOfOperators = new Feature("noOfOperators", Qualifier.greateThan(2));
-        Feature noOfUniqueOperators = new Feature("noOfUniqueOperators");
-        Feature literalCount = new Feature("literalCount");
-//        NavieBayes navieBayes2 = new NavieBayes(noOfOperators, noOfUniqueOperators, literalCount);
-        Attribute operatorCount = new Attribute(2);
-    }
+		Attribute Weak = new Attribute("Weak");
+		Attribute Strong = new Attribute("Strong");
+		// Day Outlook Temperature Humidity Wind Play Tennis?
 
-    public static void main2(String[] args) {
-        Category yes = new Category("Yes");
-        Category no = new Category("No");
+		// 3 Overcast Hot High Weak Yes
+		navieBayes.train(Yes, Overcast, Hot, High, Weak);// 3
+		// 4 Rain Mild High Weak Yes
+		navieBayes.train(Yes, Rain, Mild, High, Weak);// 4
+		// 9 Sunny Cool Normal Weak Yes
+		navieBayes.train(Yes, Sunny, Cool, Normal, Weak);// 9
+		// 10 Rain Mild Normal Weak Yes
+		navieBayes.train(Yes, Rain, Mild, Normal, Weak);// 10
+		// 13 Overcast Hot Normal Weak Yes
+		navieBayes.train(Yes, Overcast, Hot, Normal, Weak);// 13
 
-        Feature wind = new Feature("Wind");
-        Feature humidity = new Feature("Humidity");
-        Feature isCloudy = new Feature("Cloud");
+		// 1 Sunny Hot High Weak No
+		navieBayes.train(No, Sunny, Hot, High, Weak);// 1
+		// 2 Sunny Hot High Strong No
+		navieBayes.train(No, Sunny, Hot, High, Strong);// 2
+		// 5 Rain Cool Normal Weak Yes
+		navieBayes.train(Yes, Rain, Cool, Normal, Weak);// 5
+		// 6 Rain Cool Normal Strong No
+		navieBayes.train(No, Rain, Cool, Normal, Strong);// 6Weak
+		// 7 Overcast Cool Normal Strong Yes
+		navieBayes.train(Yes, Overcast, Cool, Normal, Strong);// 7
+		// 8 Sunny Mild High Weak No
+		navieBayes.train(No, Sunny, Mild, High, Weak);// 8
+		// 11 Sunny Mild Normal Strong Yes
+		navieBayes.train(Yes, Sunny, Mild, Normal, Strong);// 11
+		// 12 Overcast Mild High Strong Yes
+		navieBayes.train(Yes, Overcast, Mild, High, Strong);// 12
+		// 14 Rain Mild High Strong No
+		navieBayes.train(No, Rain, Mild, High, Strong);// 14
 
-        NavieBayes navieBayes = new NavieBayes(humidity, wind, isCloudy);
+		// navieBayes.getPriorProb(No);
+		// navieBayes.getPriorProb(Yes);
 
-        Attribute strongWind = new Attribute("Strong");
-        Attribute weakWind = new Attribute("Weak");
-        Attribute highHumidity = new Attribute("High");
-        Attribute lowHumidity = new Attribute("Low");
+		// navieBayes.getConditionalProb(Sunny, Yes);
+		// navieBayes.getConditionalProb(Overcast, Yes);
+		// navieBayes.getConditionalProb(High, Yes);
 
-        Attribute isCloudyYes = new Attribute(true);
-        Attribute noCloud = new Attribute(false);
-        // featureValueMap.put(wind, strongWind);
-        // featureValueMap.put(humidity, highHumidity);
-        //
-        //
-        // navieBayes.train(c, featureValueMap);
-        // featureValueMap = new HashMap<Feature, Attribute>();
-        // featureValueMap.put(wind, weakWind);
-        // featureValueMap.put(humidity, lowHumidity);
-        // navieBayes.train(no, featureValueMap);
-        navieBayes.train(no, lowHumidity, weakWind, noCloud);
-        navieBayes.train(yes, highHumidity, strongWind, isCloudyYes);
-        navieBayes.train(yes, highHumidity, weakWind, isCloudyYes);
-        // featureValueMap = new HashMap<Feature, Attribute>();
-        // featureValueMap.put(wind, weakWind);
-        // featureValueMap.put(humidity, highHumidity);
-        // navieBayes.train(no, featureValueMap);
-        // System.out.println(navieBayes.cateogryCount);
-        System.out.println(navieBayes.getPriorProb(no));
-        System.out.println(navieBayes.getPriorProb(yes));
-        System.out.println(navieBayes.getConditionalProb(highHumidity, no));
-        System.out.println(navieBayes.getConditionalProb(highHumidity, yes));
-        System.out.println(navieBayes.getConditionalProb(strongWind, yes));
-        System.out.println(navieBayes.getConditionalProb(noCloud, yes));
-        System.out.println(navieBayes.getConditionalProb(noCloud, no));
-        System.out.println("Finished");
-    }
+		// System.out.println(navieBayes.classify(Sunny, Cool, High, Strong));
+		// X = (Outlook=Sunny, Temperature=Cool, Humidity=High, Wind=Strong)
+		System.out.println(navieBayes.classify(Sunny, Cool, High, Strong));
 
-    @SuppressWarnings(value = { "all" })
-    public void counter(Map map, Serializable key) {
-        Long v = (Long) map.get(key);
-        map.put(key, v == null ? 1L : ++v);
-    }
+		// ///////////////////////
+		Category low = new Category("low");
+		Category high = new Category("high");
+		Category medium = new Category("medium");
 
-    public double getPriorProb(Category cat) {
-        System.out.println("P(" + cat+") = "+ cateogryCount.get(cat) + "/" + totalCategoryCount +" = " + cateogryCount.get(cat) / totalCategoryCount);
-        return cateogryCount.get(cat) / totalCategoryCount;
-    }
+		// Feature noOfOperators = new Feature("noOfOperators",
+		// Qualifier.greateThan(2));
+		Feature noOfUniqueOperators = new Feature("noOfUniqueOperators");
+		Feature literalCount = new Feature("literalCount");
+		// NavieBayes navieBayes2 = new NavieBayes(noOfOperators,
+		// noOfUniqueOperators, literalCount);
+		Attribute operatorCount = new Attribute(2);
+	}
 
-    public double getConditionalProb(Attribute att, Category category) {
-        double prob = 0;
-        Map<Attribute, Long> v = attributePerCategoryCount.get(category);
-        if (v == null) {
-            prob = 0L;
-        }
-        Long val = 0L;
-        if (v != null && v.containsKey(att)) {
-            val = v.get(att);
-        }
+	public static void main2(String[] args) {
+		Category yes = new Category("Yes");
+		Category no = new Category("No");
 
-        val = val == null ? 0L : val;
-        prob = val.doubleValue();
-        System.out.println("P(" + att + "/" + category + ") = \t" + prob + "/" + cateogryCount.get(category) + "=" + prob
-                / cateogryCount.get(category));
-        return prob / cateogryCount.get(category);
-    }
+		Feature wind = new Feature("Wind");
+		Feature humidity = new Feature("Humidity");
+		Feature isCloudy = new Feature("Cloud");
 
-    public Feature[] getFeatures() {
-        return features;
-    }
+		NavieBayes navieBayes = new NavieBayes(humidity, wind, isCloudy);
 
-    public void setFeatures(Feature[] features) {
-        this.features = features;
-    }
+		Attribute strongWind = new Attribute("Strong");
+		Attribute weakWind = new Attribute("Weak");
+		Attribute highHumidity = new Attribute("High");
+		Attribute lowHumidity = new Attribute("Low");
+
+		Attribute isCloudyYes = new Attribute(true);
+		Attribute noCloud = new Attribute(false);
+		// featureValueMap.put(wind, strongWind);
+		// featureValueMap.put(humidity, highHumidity);
+		//
+		//
+		// navieBayes.train(c, featureValueMap);
+		// featureValueMap = new HashMap<Feature, Attribute>();
+		// featureValueMap.put(wind, weakWind);
+		// featureValueMap.put(humidity, lowHumidity);
+		// navieBayes.train(no, featureValueMap);
+		navieBayes.train(no, lowHumidity, weakWind, noCloud);
+		navieBayes.train(yes, highHumidity, strongWind, isCloudyYes);
+		navieBayes.train(yes, highHumidity, weakWind, isCloudyYes);
+		// featureValueMap = new HashMap<Feature, Attribute>();
+		// featureValueMap.put(wind, weakWind);
+		// featureValueMap.put(humidity, highHumidity);
+		// navieBayes.train(no, featureValueMap);
+		// System.out.println(navieBayes.cateogryCount);
+		System.out.println(navieBayes.getPriorProb(no));
+		System.out.println(navieBayes.getPriorProb(yes));
+		System.out.println(navieBayes.getConditionalProb(highHumidity, no));
+		System.out.println(navieBayes.getConditionalProb(highHumidity, yes));
+		System.out.println(navieBayes.getConditionalProb(strongWind, yes));
+		System.out.println(navieBayes.getConditionalProb(noCloud, yes));
+		System.out.println(navieBayes.getConditionalProb(noCloud, no));
+		System.out.println("Finished");
+	}
+
+	@SuppressWarnings(value = { "all" })
+	public void counter(Map map, Serializable key) {
+		Long v = (Long) map.get(key);
+		map.put(key, v == null ? 1L : ++v);
+	}
+
+	public double getPriorProb(Category cat) {
+		System.out.println("P(" + cat + ") = " + cateogryCount.get(cat) + "/" + totalCategoryCount + " = "
+				+ cateogryCount.get(cat) / totalCategoryCount);
+		return cateogryCount.get(cat) / totalCategoryCount;
+	}
+
+	public double getConditionalProb(Attribute att, Category category) {
+		double prob = 0;
+		Map<Attribute, Long> v = attributePerCategoryCount.get(category);
+		if (v == null) {
+			prob = 0L;
+		}
+		Long val = 0L;
+		if (v != null && v.containsKey(att)) {
+			val = v.get(att);
+		}
+
+		val = val == null ? 0L : val;
+		prob = val.doubleValue();
+		System.out.println("P(" + att + "/" + category + ") = \t" + prob + "/" + cateogryCount.get(category) + "="
+				+ prob / cateogryCount.get(category));
+		return prob / cateogryCount.get(category);
+	}
+
+	public Feature[] getFeatures() {
+		return features;
+	}
+
+	public void setFeatures(Feature[] features) {
+		this.features = features;
+	}
 }
