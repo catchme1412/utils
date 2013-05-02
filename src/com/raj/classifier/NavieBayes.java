@@ -84,7 +84,9 @@ public class NavieBayes {
 
 			Set<Attribute> attributeList = featureAttributeMap.get(features[i]);
 			if (attributeList == null) {
-				featureAttributeMap.put(features[i], new HashSet());
+				HashSet value = new HashSet();
+				value.add(attribute);
+				featureAttributeMap.put(features[i], value);
 			} else {
 				attributeList.add(attribute);
 				featureAttributeMap.put(features[i],attributeList);
@@ -156,6 +158,9 @@ public class NavieBayes {
 
 	private Category classify(Serializable... attributes) {
 		Attribute[] arg = new Attribute[attributes.length];
+		//get all the attributes under the feature
+		//match the attribute with args
+		//add the matched to the arg
 		int i = 0;
 		for (Serializable a : attributes) {
 			System.out.println("AAAAAA" + a);
@@ -170,32 +175,8 @@ public class NavieBayes {
 				}
 			}
 		}
-		//loop through feature
-		//get all the attributes under the feature
-		//match the attribute with args
-		//add the matched to the arg
-		
-		//
-//			List<Attribute> attr = featureAttributeMap.get(f);
-//			System.out.println(f + "" + attr);
-//			int j = 0;
-//			for (Attribute a : attr) {
-//				for (Serializable sa : attributes) {
-//					if (a.getQualifier().qualify(sa)) {
-//						arg[i] = a;
-//						i++;
-//					}
-//				}
-//				// if (a.getQualifier().qualify((Serializable) attributes[j++]))
-//				// {
-//				// arg[i] = a;
-//				// i++;
-//				// }
-//				// System.out.println(a);
-//			}
-//		}
+
 		return classify(arg);
-//		return null;
 	}
 
 	public static void main3(String[] args) {

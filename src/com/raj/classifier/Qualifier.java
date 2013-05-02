@@ -53,6 +53,12 @@ public class Qualifier implements Serializable {
 		q.value = containsText;
 		return q;
 	}
+	
+	public static Qualifier doesNotContains(String text) {
+		Qualifier q = new Qualifier("containsText " + text);
+		q.value = text;
+		return q;
+	}
 
 	public boolean isContains(String text) {
 		return text.contains(value.toString());
