@@ -53,16 +53,16 @@ public class NavieBayes {
 			} else {
 				counter(attributePerCategoryCount.get(category), featureValueMap.get(f));
 			}
-			System.out.print(f);
-			System.out.print("\t");
+			// System.out.print(f);
+			// System.out.print("\t");
 		}
 
-		System.out.println("Category");
-		for (Attribute v : attributeValues) {
-			System.out.print(v);
-			System.out.print("\t\t");
-		}
-		System.out.println(category);
+		// System.out.println("Category");
+		// for (Attribute v : attributeValues) {
+		// System.out.print(v);
+		// System.out.print("\t\t");
+		// }
+		// System.out.println(category);
 
 	}
 
@@ -89,7 +89,7 @@ public class NavieBayes {
 				featureAttributeMap.put(features[i], value);
 			} else {
 				attributeList.add(attribute);
-				featureAttributeMap.put(features[i],attributeList);
+				featureAttributeMap.put(features[i], attributeList);
 			}
 
 			Map<Attribute, Long> attributeMap = attributePerCategoryCount.get(category);
@@ -126,13 +126,14 @@ public class NavieBayes {
 				double x = getConditionalProb(attribute, c);
 				categoryProb *= x;
 			}
-			System.out.println("conditional:" + categoryProb);
+			// System.out.println("conditional:" + categoryProb);
 			categoryProb *= getPriorProb(c);
-			System.out.println("proirProb:" + categoryProb);
+			// System.out.println("proirProb:" + categoryProb);
 			values.put(categoryProb, c);
-			System.out.println("CLASSIFICATION=>Cateogry:" + c + " : " + categoryProb);
+			// System.out.println("CLASSIFICATION=>Cateogry:" + c + " : " +
+			// categoryProb);
 		}
-		System.out.println(values);
+		// System.out.println(values);
 		return values.lastEntry().getValue();
 	}
 
@@ -140,37 +141,67 @@ public class NavieBayes {
 		Category Yes = new Category("Yes");
 		Category No = new Category("No");
 		Feature mediaTitle = new Feature("title");
+//		Feature duration = new Feature("duration");
+//		NavieBayes navieBayes = new NavieBayes(mediaTitle, duration);
+		// Qualifier contains = Qualifier.contains("movie");
+		// Qualifier containsNot =
+		// Qualifier.contains("movie").setNegation(true);
+		// Attribute titleContainsMovie = new Attribute("containsMovie",
+		// contains);
+		// Attribute titleDontContainsMovie = new Attribute("dontContainsMovie",
+		// containsNot);
+		// Attribute durationAboveOneHour = new Attribute("aboveOneHour",
+		// Qualifier.greateThan(3600));
+		// Attribute durationLessThanOneHour = new Attribute("lessThanOneHour",
+		// Qualifier.lessThan(3600));
+		// navieBayes.train(Yes, titleContainsMovie, durationAboveOneHour);
+		// navieBayes.train(No, titleContainsMovie, durationLessThanOneHour);
+		// navieBayes.train(No, titleDontContainsMovie,
+		// durationLessThanOneHour);
+		// navieBayes.train(Yes, titleDontContainsMovie,
+		// durationLessThanOneHour);
+		// Category c =
+		// navieBayes.classify("Allah Allah: Da Thadiya Malayalam Movie Video Song",
+		// 300);
+		// System.out.println(c);
+		final Category MOVIE = new Category("movie");
+		final Category OTHER = new Category("other");
+
+		Feature title = new Feature("title");
 		Feature duration = new Feature("duration");
-		NavieBayes navieBayes = new NavieBayes(mediaTitle, duration);
-		Qualifier contains = Qualifier.contains("movie");
-		Qualifier containsNot = Qualifier.contains("movie").setNegation(true);
-		Attribute titleContainsMovie = new Attribute("containsMovie", contains);
-		Attribute titleDontContainsMovie = new Attribute("dontContainsMovie", containsNot);
-		Attribute durationAboveOneHour = new Attribute("aboveOneHour", Qualifier.greateThan(3600));
-		Attribute durationLessThanOneHour = new Attribute("lessThanOneHour", Qualifier.lessThan(3600));
-		navieBayes.train(Yes, titleContainsMovie, durationAboveOneHour);
-		navieBayes.train(No, titleContainsMovie, durationLessThanOneHour);
-		navieBayes.train(No, titleDontContainsMovie, durationLessThanOneHour);
-		navieBayes.train(Yes, titleDontContainsMovie, durationLessThanOneHour);
-		Category c = navieBayes.classify("da thadiya movie", 3700);
+		Feature songInTitle = new Feature("songInTitle");
+		Feature rating = new Feature("rating");
+		NavieBayes navieBayes = new NavieBayes(title, duration, songInTitle);
+
+		Attribute titleContainsMovie = new Attribute("titleContainsMovie", Qualifier.contains("movie"));
+		Attribute titleNotContainsMovie = new Attribute("titleNotContainsMovie", Qualifier.contains("movie")
+				.setNegation(true));
+		Attribute titleContainsSong = new Attribute("titleContainsSong", Qualifier.contains("song"));
+		Attribute titleNotContainsSong = new Attribute("titleNotContainsSong", Qualifier.contains("song").setNegation(
+				true));
+		Attribute durationAboveOneHour = new Attribute("durationAboveOneHour", Qualifier.greateThan(3600L));
+		Attribute durationLessThanOneHour = new Attribute("durationLessThanOneHour", Qualifier.lessThan(3600L));
+		navieBayes.train(MOVIE, titleContainsMovie, durationLessThanOneHour, titleNotContainsSong);
+		navieBayes.train(OTHER, titleNotContainsMovie, durationLessThanOneHour, titleContainsSong);
+		navieBayes.train(MOVIE, titleContainsMovie, durationAboveOneHour, titleNotContainsSong);
+		navieBayes.train(OTHER, titleContainsMovie, durationLessThanOneHour, titleContainsSong);
+		navieBayes.train(OTHER, titleContainsMovie, durationLessThanOneHour, titleContainsSong);
+		Category c = navieBayes.classify("Allah Allah: Da Thadiya Malayalam Movie Video Song", 300L, "Allah Allah: Da Thadiya Malayalam Movie Video Song");
 		System.out.println(c);
 	}
 
-	private Category classify(Serializable... attributes) {
+	public Category classify(Serializable... attributes) {
 		Attribute[] arg = new Attribute[attributes.length];
-		//get all the attributes under the feature
-		//match the attribute with args
-		//add the matched to the arg
+		// get all the attributes under the feature
+		// match the attribute with args
+		// add the matched to the arg
 		int i = 0;
 		for (Serializable a : attributes) {
-			System.out.println("AAAAAA" + a);
 			Set<Attribute> attr = featureAttributeMap.get(features[i]);
-			System.out.println(attr);
 			for (Attribute at : attr) {
-				System.out.println(at.getQualifier());
+				// System.out.println(at.getQualifier());
 				if (at.getQualifier().qualify(a)) {
 					arg[i] = at;
-					System.out.println(at + ":::" + a + "::::" + arg[i]);
 					i++;
 				}
 			}
@@ -311,8 +342,9 @@ public class NavieBayes {
 	}
 
 	public double getPriorProb(Category cat) {
-		System.out.println("P(" + cat + ") = " + cateogryCount.get(cat) + "/" + totalCategoryCount + " = "
-				+ cateogryCount.get(cat) / totalCategoryCount);
+		// System.out.println("P(" + cat + ") = " + cateogryCount.get(cat) + "/"
+		// + totalCategoryCount + " = "
+		// + cateogryCount.get(cat) / totalCategoryCount);
 		return cateogryCount.get(cat) / totalCategoryCount;
 	}
 
@@ -329,8 +361,9 @@ public class NavieBayes {
 
 		val = val == null ? 0L : val;
 		prob = val.doubleValue();
-		System.out.println("P(" + att + "/" + category + ") = \t" + prob + "/" + cateogryCount.get(category) + "="
-				+ prob / cateogryCount.get(category));
+		// System.out.println("P(" + att + "/" + category + ") = \t" + prob +
+		// "/" + cateogryCount.get(category) + "="
+		// + prob / cateogryCount.get(category));
 		return prob / cateogryCount.get(category);
 	}
 
