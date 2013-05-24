@@ -1,0 +1,14 @@
+<serverMappings>
+	<serverMapping id="adt">
+		<server>egadtapp01.prod.o.com</server>
+		<server>egadtapp02.prod.o.com</server>
+		<server>egapp6055p.prod.orbitz.net</server>
+		<server>egapp6071p.prod.orbitz.net</server>
+		<server>egapp6101p.prod.orbitz.net</server>
+		<server>eguspostest2001p.prod.orbitz.net</server>
+		<server>wmapp6013p.prod.orbitz.net</server>
+		<server>wmapp6055p.prod.orbitz.net</server>
+		<server>wmapp6071p.prod.orbitz.net</server>
+		<server>wmapp6175p.prod.orbitz.net</server>
+	</serverMapping>
+</serverMappings>
