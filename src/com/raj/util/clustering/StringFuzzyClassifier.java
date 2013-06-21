@@ -44,15 +44,29 @@ public class StringFuzzyClassifier {
 	
 	@Override
 	public String toString() {
-		return keyMap.toString();
+		StringBuffer text=new StringBuffer();
+//	      for (String key : keyMap.keySet()) {
+//	          text.append(key).append(":");
+//	          List data= keyMap.get(key);
+//	          text.append(data.size());
+//	          //text.append(data.toString());
+//	          text.append("*********\n");
+//	      }
+//	    return text.toString();
+	    
+	    return keyMap.toString();
 	}
 	
 	public static void main(String[] args) {
-		StringFuzzyClassifier f = new StringFuzzyClassifier(0.5);
+		StringFuzzyClassifier f = new StringFuzzyClassifier(.70);
 		f.addToCluster("AAAAA");
-		f.addToCluster("AAAAAA");
+		f.addToCluster("AAABAA");
 		f.addToCluster("AAAAAAV");
 		f.addToCluster("BBBBBBBBBB");
+		f.addToCluster("AABBBBBBBB");
+		f.addToCluster("AABBABABBB");
+
+		
 		System.out.println(f);
 	}
 }
