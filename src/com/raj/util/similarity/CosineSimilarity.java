@@ -41,13 +41,13 @@ public class CosineSimilarity {
 	}
 
 	public static void main(String[] args) {
-		//full movie, movie, song, duration, rating
-		Tuple movie = new Tuple(1, 1, 0, 7, 5);
-		Tuple song = new Tuple(0, 1, 1, 7, 5);
+		//title contains (possible values in bracket): full movie (1,0), movie(1,0), song(1,0), duration(in min), rating(out of 5)
+		Tuple movieIdeal = new Tuple(1, 1, 0, 10, 5);
+		Tuple songIdeal = new Tuple(0, 1, 1, 7, 5);
 		Tuple v1 = new Tuple(0, 1, 0, 7, 4);
 		Tuple v2 = new Tuple(0, 1, 1, 6, 3);
-		System.out.println(similarity(v1, movie));
-		System.out.println(similarity(v1, song));
+		System.out.println(similarity(v1, movieIdeal));//
+		System.out.println(similarity(v1, songIdeal));
 		System.out.println(similarity(v2, v1));
 		System.out.println(distance(v1.getElements(), v2.getElements()));
 	}
