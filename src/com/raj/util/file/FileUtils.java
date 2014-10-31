@@ -23,8 +23,21 @@ public class FileUtils {
 
         return dir.listFiles(filter);
     }
+    public static File[] getFilesMatching(String path, final String regExp) {
+        // It is also possible to filter the list of returned files.
+        // This example does not return any files that start with `.'.
+        FilenameFilter filter = new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.matches(regExp);
+            }
+        };
 
-    public static File[] getFiles(String path, final String fileNameEndingWith) {
+        File dir = new File(path);
+
+        return dir.listFiles(filter);
+    }
+    
+    public static File[] getFilesEndingWith(String path, final String fileNameEndingWith) {
         // It is also possible to filter the list of returned files.
         // This example does not return any files that start with `.'.
         FilenameFilter filter = new FilenameFilter() {
